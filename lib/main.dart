@@ -51,22 +51,20 @@ class Cell extends StatelessWidget {
 
   final String title;
 
-  _decoration() {
-    return BoxDecoration(
-        border: Border.all(
-      color: Colors.black,
-    ));
+  _buttonStyle() {
+    return ButtonStyle(
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            const RoundedRectangleBorder(
+                borderRadius: BorderRadius.zero,
+                side: BorderSide(color: Colors.grey))));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        decoration: _decoration(),
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(title),
-            ]));
+    return TextButton(
+      onPressed: () => {},
+      style: _buttonStyle(),
+      child: Text(title),
+    );
   }
 }
