@@ -40,14 +40,16 @@ class _GamePanelState extends State<GamePanel> {
       body: GridView.count(
         crossAxisCount: 5,
         children: List.generate(
-            50, (index) => Cell(key: Key(index.toString()), title: "C $index")),
+            50,
+            (index) =>
+                CellWidget(key: Key(index.toString()), title: "C $index")),
       ),
     );
   }
 }
 
-class Cell extends StatelessWidget {
-  const Cell({Key? key, required this.title}) : super(key: key);
+class CellWidget extends StatelessWidget {
+  const CellWidget({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
