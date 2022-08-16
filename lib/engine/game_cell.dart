@@ -1,7 +1,8 @@
+import 'dart:collection';
 import 'dart:ffi';
 
 class GameCell {
-  final List<_GameCellQueuedTransaction> _transactionQueue = [];
+  final Queue<_GameCellQueuedTransaction> _transactionQueue = Queue();
   final Map<String, int> _inventory = {};
 
   void queueTransaction(String material, int quantity) {

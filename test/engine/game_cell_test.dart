@@ -33,7 +33,7 @@ void main() {
       cell.queueTransaction(corn, 1);
       cell.commitPendingTransactions();
       cell.commitPendingTransactions();
-      expect(cell.getInventoryQuantity(corn), equals(2));
+      expect(cell.getInventoryQuantity(corn), equals(1));
     });
   });
 
