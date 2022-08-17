@@ -64,9 +64,44 @@ class CellWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: () => {},
+      onPressed: () => showModalBottomSheet(
+          context: context, builder: _buildCellDetailSheet),
       style: _buttonStyle(),
       child: Text(title),
     );
+  }
+
+  Widget _buildCellDetailSheet(BuildContext context) {
+    return const CellDetailSheet();
+  }
+}
+
+class CellDetailSheet extends StatelessWidget {
+  const CellDetailSheet({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+        child: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: const [
+        Text("Title 1"),
+        ListTile(
+          title: Text('Music'),
+          trailing: Text('45'),
+        ),
+        ListTile(
+          title: Text('Video'),
+          trailing: Text('45'),
+        ),
+        ListTile(
+          title: Text('Share'),
+          trailing: Text('45'),
+        ),
+        // ElevatedButton(
+        //     onPressed: () => Navigator.pop(context), child: const Text("Close"))
+      ],
+    ));
   }
 }
