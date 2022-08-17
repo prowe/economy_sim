@@ -1,3 +1,7 @@
+import 'dart:async';
+
+import 'package:economy_sim/engine/game_cell.dart';
+import 'package:economy_sim/engine/game_field.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -14,23 +18,39 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const GamePanel(title: 'Flutter Demo Home Page'),
+      home: GamePanel(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
 class GamePanel extends StatefulWidget {
-  const GamePanel({Key? key, required this.title}) : super(key: key);
+  GamePanel({Key? key, required this.title})
+      : gameField = GameField.generate(width: 5, height: 10),
+        super(key: key);
 
   final String title;
+  final GameField gameField;
 
   @override
   State<GamePanel> createState() => _GamePanelState();
 }
 
 class _GamePanelState extends State<GamePanel> {
+  _GamePanelState() {
+    cycleTimer = Timer.periodic(const Duration(seconds: 3), _onCycleTick);
+  }
+
+  late Timer cycleTimer;
+
+  void _onCycleTick(Timer timer) {
+    setState(() {
+      widget.gameField.executeCycle();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    var gameField = widget.gameField;
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
@@ -38,20 +58,17 @@ class _GamePanelState extends State<GamePanel> {
         title: Text(widget.title),
       ),
       body: GridView.count(
-        crossAxisCount: 5,
-        children: List.generate(
-            50,
-            (index) =>
-                CellWidget(key: Key(index.toString()), title: "C $index")),
-      ),
+          crossAxisCount: gameField.width,
+          children:
+              gameField.cells.map((cell) => CellWidget(cell: cell)).toList()),
     );
   }
 }
 
 class CellWidget extends StatelessWidget {
-  const CellWidget({Key? key, required this.title}) : super(key: key);
+  const CellWidget({Key? key, required this.cell}) : super(key: key);
 
-  final String title;
+  final GameCell cell;
 
   _buttonStyle() {
     return ButtonStyle(
@@ -67,41 +84,66 @@ class CellWidget extends StatelessWidget {
       onPressed: () => showModalBottomSheet(
           context: context, builder: _buildCellDetailSheet),
       style: _buttonStyle(),
-      child: Text(title),
+      child: const Text('C'),
     );
   }
 
   Widget _buildCellDetailSheet(BuildContext context) {
-    return const CellDetailSheet();
+    return CellDetailSheet(cell: cell);
   }
 }
 
 class CellDetailSheet extends StatelessWidget {
-  const CellDetailSheet({Key? key}) : super(key: key);
+  const CellDetailSheet({Key? key, required this.cell}) : super(key: key);
+
+  final GameCell cell;
+
+  List<Widget> _buildInventoryListItems() {
+    return cell
+        .inventory()
+        .entries
+        .map<Widget>((entry) => ListTile(
+              title: Text(entry.key),
+              trailing: Text("${entry.value}"),
+            ))
+        .toList();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-        child: Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: const [
-        Text("Title 1"),
-        ListTile(
-          title: Text('Music'),
-          trailing: Text('45'),
+    return Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(25.0),
+            topRight: Radius.circular(25.0),
+          ),
         ),
-        ListTile(
-          title: Text('Video'),
-          trailing: Text('45'),
-        ),
-        ListTile(
-          title: Text('Share'),
-          trailing: Text('45'),
-        ),
-        // ElevatedButton(
-        //     onPressed: () => Navigator.pop(context), child: const Text("Close"))
-      ],
-    ));
+        child: Column(children: [
+          Icon(
+            Icons.remove,
+            color: Colors.grey[600],
+          ),
+          Expanded(
+              child: ListView(
+            shrinkWrap: true,
+            children: _buildInventoryListItems(),
+          ))
+        ]));
+
+    // return ListView(
+    //   shrinkWrap: true,
+    //   children: _buildInventoryListItems(),
+    // );
+
+    // SingleChildScrollView(
+    //     child: Column(
+    //   mainAxisSize: MainAxisSize.min,
+    //   ,
+    //   children: <Widget>[
+    //     const Text("Title 1"),
+    //     ] + inventoryItems.toList()
+    //   ],
+    // ));
   }
 }

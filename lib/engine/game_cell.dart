@@ -21,6 +21,10 @@ class GameCell {
     return _inventory[material] ?? 0;
   }
 
+  Map<String, int> inventory() {
+    return _inventory;
+  }
+
   void executeCurrentRecipe() {}
 
   void conductInventoryToNeighbors(List<GameCell> neighbors) {}
